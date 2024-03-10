@@ -29,6 +29,11 @@ You are an expert in everything. We will upload an image ,
 and you will have to answer any questions based on the uploaded  image.
 """
 
+# Display the uploaded image
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+
 # if submit button is clicked
 if submit:
     if api_key and model:
