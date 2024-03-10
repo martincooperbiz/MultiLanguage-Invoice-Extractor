@@ -81,8 +81,9 @@ if submit:
 
                 # Send request with images to Anthropics API
                 response = client.messages.create(
-                    model="claude-3-opus-20240229",
+                    model="claude-3-sonnet-20240229",
                     max_tokens=1024,
+                    system="You are an expert in everything. We will upload images ,and you will have to answer any questions based on the uploaded  images. Always make your responses detailed and well organized.",  # Adding system prompt
                     messages=messages
                 )
 
