@@ -31,19 +31,20 @@ and you will have to answer any questions based on the uploaded  image.
 
 # if submit button is clicked
 if submit:
-    if api_key and client:
+    if api_key and model:
         if uploaded_files:
             for uploaded_file in uploaded_files:
                 # Process each uploaded image and input
                 if uploaded_file is not None:
-                    # Create message with Anthropic API
+                    # Create message with Anthropics API
+                    content_type = getattr(uploaded_file, "type", "image/jpeg")
                     message = client.messages.create(
                         model="claude-3-sonnet-20240229",
                         max_tokens=1000,
                         temperature=0,
                         messages=[{
                             "data": uploaded_file,
-                            "content_type": uploaded_file.type
+                            "content_type": content_type
                         }]
                     )
                     st.subheader("The Response for Image:")
@@ -54,5 +55,5 @@ if submit:
             st.error("No files uploaded. Please select one or more images.")
     elif not api_key:
         st.error("Please enter your Anthropics API key.")
-    elif not client:
-        st.error("Failed to initialize the Anthropic client. Please check your API key.")
+    elif not model:
+        st.error("Failed to initialize the model. Please check your API key.")
