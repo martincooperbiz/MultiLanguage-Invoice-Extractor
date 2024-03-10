@@ -37,7 +37,8 @@ def input_image_details(uploaded_file):
         raise FileNotFoundError("No file uploaded")
 
 # Initialize Streamlit app
-st.set_page_config(page_title="MultiLanguage Invoice Extractor")
+if api_key:
+    st.set_page_config(page_title="MultiLanguage Invoice Extractor")
 
 st.header("MultiLanguage Invoice Extractor")
 input_text = st.text_input("Input Prompt:", key="input")
