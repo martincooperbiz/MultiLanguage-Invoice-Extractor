@@ -26,21 +26,28 @@ def encode_image_to_base64(image_file):
     image_base64 = base64.b64encode(image_content).decode("utf-8")
     return image_base64
 
+# Function to display uploaded images
+def display_uploaded_images(uploaded_files):
+    if uploaded_files:
+        st.subheader("Uploaded Images:")
+        for uploaded_file in uploaded_files:
+            st.image(uploaded_file, caption=uploaded_file.name, use_column_width=True)
+
 # Function to display response
 def display_response(response):
     st.subheader("Response for Images:")
-    st.markdown(f"**Message ID:** `{response['id']}`")
-    st.markdown(f"**Model:** `{response['model']}`")
-    st.markdown(f"**Role:** `{response['role']}`")
-    st.markdown(f"**Stop Reason:** `{response['stop_reason']}`")
-    st.markdown(f"**Stop Sequence:** {response['stop_sequence']}")
+    st.markdown(f"**Message ID:** `{response.id}`")
+    st.markdown(f"**Model:** `{response.model}`")
+    st.markdown(f"**Role:** `{response.role}`")
+    st.markdown(f"**Stop Reason:** `{response.stop_reason}`")
+    st.markdown(f"**Stop Sequence:** {response.stop_sequence}")
     
     st.markdown("**Content:**")
-    st.write(response['content'][0]['text'])  # Displaying content
+    st.write(response.content[0].text)  # Displaying content
     
     st.markdown("**Usage:**")
-    st.markdown(f"- **Input Tokens:** {response['usage']['input_tokens']}")
-    st.markdown(f"- **Output Tokens:** {response['usage']['output_tokens']}")
+    st.markdown(f"- **Input Tokens:** {response.usage.input_tokens}")
+    st.markdown(f"- **Output Tokens:** {response.usage.output_tokens}")
 
 # Send request when button is clicked
 if submit:
@@ -88,3 +95,6 @@ if submit:
             st.error("Please select one or more images.")
     else:
         st.error("Please enter your Anthropics API key and input prompt.")
+
+# Display uploaded images
+display_uploaded_images(uploaded_files)
