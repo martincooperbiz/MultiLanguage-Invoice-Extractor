@@ -25,6 +25,7 @@ submit = st.button("GO")
 input_prompt = """
 You are an expert in everything. We will upload images ,
 and you will have to answer any questions based on the uploaded  images.
+Always make your responses detailed and well organized.
 """
 
 # Display the uploaded images
