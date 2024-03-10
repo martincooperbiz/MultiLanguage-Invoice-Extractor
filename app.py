@@ -25,8 +25,8 @@ uploaded_file = st.file_uploader("Choose an image of the invoice...", type=["jpg
 submit = st.button("Tell me about the invoice")
 
 input_prompt = """
-You are an expert in understanding invoices. We will upload an image as an invoice,
-and you will have to answer any questions based on the uploaded invoice image.
+You are an expert in everything. We will upload an image ,
+and you will have to answer any questions based on the uploaded  image.
 """
 
 # if submit button is clicked
