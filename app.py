@@ -9,7 +9,7 @@ st.title("AI VISION")
 api_key = st.text_input("Enter your Anthropics API key:", type="password")
 
 # Initialize Anthropics client
-client = anthropic.Anthropic()
+client = anthropic.Anthropic(api_key=api_key)
 
 # Input fields
 input_text = st.text_input("Input Prompt:")
@@ -39,31 +39,36 @@ if submit:
 
                     # Send request with image to Anthropics API
                     try:
-                        message = client.messages.create(
-                            model="claude-3-sonnet-20240229",
-                            max_tokens=1024,
-                            messages=[
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "image",
-                                            "source": {
-                                                "type": "base64",
-                                                "media_type": uploaded_file.type,
-                                                "data": image_data,
+                        headers = {"Authorization": f"Bearer {api_key}"}
+                        response = httpx.post(
+                            "https://api.anthropic.com/v1/messages",
+                            headers=headers,
+                            json={
+                                "model": "claude-3-sonnet-20240229",
+                                "max_tokens": 1024,
+                                "messages": [
+                                    {
+                                        "role": "user",
+                                        "content": [
+                                            {
+                                                "type": "image",
+                                                "source": {
+                                                    "type": "base64",
+                                                    "media_type": uploaded_file.type,
+                                                    "data": image_data,
+                                                },
                                             },
-                                        },
-                                        {
-                                            "type": "text",
-                                            "text": input_text
-                                        }
-                                    ],
-                                }
-                            ]
+                                            {
+                                                "type": "text",
+                                                "text": input_text
+                                            }
+                                        ],
+                                    }
+                                ]
+                            }
                         )
                         st.subheader("The Response for Image:")
-                        st.write(message)
+                        st.write(response.json())
                     except Exception as e:
                         st.error(f"Error sending request: {e}")
                 else:
