@@ -79,3 +79,39 @@ if submit:
             st.error("Please select one or more images.")
     else:
         st.error("Please enter your Anthropics API key and input prompt.")
+
+# Function to display response
+def display_response(response):
+    st.subheader("Response for Images:")
+    st.markdown(f"**Message ID:** `{response['id']}`")
+    st.markdown(f"**Model:** `{response['model']}`")
+    st.markdown(f"**Role:** `{response['role']}`")
+    st.markdown(f"**Stop Reason:** `{response['stop_reason']}`")
+    st.markdown(f"**Stop Sequence:** {response['stop_sequence']}")
+    
+    st.markdown("**Content:**")
+    st.write(response['content'][0]['text'])  # Displaying content
+    
+    st.markdown("**Usage:**")
+    st.markdown(f"- **Input Tokens:** {response['usage']['input_tokens']}")
+    st.markdown(f"- **Output Tokens:** {response['usage']['output_tokens']}")
+
+# Sample response data
+sample_response = {
+    "id": "msg_012uYrvYTFuf6DC1e6xZMbnu",
+    "model": "claude-3-opus-20240229",
+    "role": "assistant",
+    "stop_reason": "end_turn",
+    "stop_sequence": None,
+    "content": [
+        {"text": "The image shows an X-ray of a human hand. The bones of the fingers, palm, and wrist are clearly visible in white against the dark background. It provides a detailed look at the skeletal structure underneath the skin and tissue of the hand.", "type": "text"}
+    ],
+    "usage": {
+        "input_tokens": 1541,
+        "output_tokens": 55
+    }
+}
+
+# Streamlit app
+st.title("Image Analysis Results")
+display_response(sample_response)
