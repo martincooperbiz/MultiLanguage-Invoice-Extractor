@@ -20,17 +20,27 @@ uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"
 # Button to trigger processing
 submit = st.button("Process Images")
 
-# Display uploaded images
-if uploaded_files:
-    st.subheader("Uploaded Images:")
-    for uploaded_file in uploaded_files:
-        st.image(uploaded_file, caption=uploaded_file.name, use_column_width=True)
-
 # Function to encode image to base64
 def encode_image_to_base64(image_file):
     image_content = image_file.read()
     image_base64 = base64.b64encode(image_content).decode("utf-8")
     return image_base64
+
+# Function to display response
+def display_response(response):
+    st.subheader("Response for Images:")
+    st.markdown(f"**Message ID:** `{response['id']}`")
+    st.markdown(f"**Model:** `{response['model']}`")
+    st.markdown(f"**Role:** `{response['role']}`")
+    st.markdown(f"**Stop Reason:** `{response['stop_reason']}`")
+    st.markdown(f"**Stop Sequence:** {response['stop_sequence']}")
+    
+    st.markdown("**Content:**")
+    st.write(response['content'][0]['text'])  # Displaying content
+    
+    st.markdown("**Usage:**")
+    st.markdown(f"- **Input Tokens:** {response['usage']['input_tokens']}")
+    st.markdown(f"- **Output Tokens:** {response['usage']['output_tokens']}")
 
 # Send request when button is clicked
 if submit:
@@ -69,8 +79,7 @@ if submit:
                     messages=messages
                 )
 
-                st.subheader("The Response for Images:")
-                st.write(response)
+                display_response(response)
 
             except Exception as e:
                 st.error(f"Error sending request: {e}")
@@ -79,24 +88,3 @@ if submit:
             st.error("Please select one or more images.")
     else:
         st.error("Please enter your Anthropics API key and input prompt.")
-
-# Function to display response
-def display_response(response):
-    st.subheader("Response for Images:")
-    st.markdown(f"**Message ID:** `{response['id']}`")
-    st.markdown(f"**Model:** `{response['model']}`")
-    st.markdown(f"**Role:** `{response['role']}`")
-    st.markdown(f"**Stop Reason:** `{response['stop_reason']}`")
-    st.markdown(f"**Stop Sequence:** {response['stop_sequence']}")
-    
-    st.markdown("**Content:**")
-    st.write(response['content'][0]['text'])  # Displaying content
-    
-    st.markdown("**Usage:**")
-    st.markdown(f"- **Input Tokens:** {response['usage']['input_tokens']}")
-    st.markdown(f"- **Output Tokens:** {response['usage']['output_tokens']}")
-
-
-# Streamlit app
-st.title("Image Analysis Results")
-display_response(sample_response)
