@@ -96,21 +96,6 @@ def display_response(response):
     st.markdown(f"- **Input Tokens:** {response['usage']['input_tokens']}")
     st.markdown(f"- **Output Tokens:** {response['usage']['output_tokens']}")
 
-# Sample response data
-sample_response = {
-    "id": "msg_012uYrvYTFuf6DC1e6xZMbnu",
-    "model": "claude-3-opus-20240229",
-    "role": "assistant",
-    "stop_reason": "end_turn",
-    "stop_sequence": None,
-    "content": [
-        {"text": "The image shows an X-ray of a human hand. The bones of the fingers, palm, and wrist are clearly visible in white against the dark background. It provides a detailed look at the skeletal structure underneath the skin and tissue of the hand.", "type": "text"}
-    ],
-    "usage": {
-        "input_tokens": 1541,
-        "output_tokens": 55
-    }
-}
 
 # Streamlit app
 st.title("Image Analysis Results")
