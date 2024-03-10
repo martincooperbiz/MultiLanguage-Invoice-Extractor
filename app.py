@@ -19,12 +19,12 @@ if api_key:
 
 # Input fields
 input_text = st.text_input("Input Prompt:")
-uploaded_files = st.file_uploader("Choose images of the invoices...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 submit = st.button("GO")
 
 input_prompt = """
-You are an expert in everything. We will upload an image ,
-and you will have to answer any questions based on the uploaded  image.
+You are an expert in everything. We will upload images ,
+and you will have to answer any questions based on the uploaded  images.
 """
 
 # Display the uploaded images
