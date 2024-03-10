@@ -8,7 +8,7 @@ st.title("AI VISION")
 api_key = st.text_input("Enter your Google API key:", type="password")
 
 # Initialize Gemini Pro Vision model
-model = None
+model = gemini-pro-vision
 
 if api_key:
     # Configure Gemini Pro Vision API with the provided API key
