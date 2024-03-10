@@ -10,6 +10,10 @@ load_dotenv()
 # Input field for API key
 api_key = st.text_input("Enter Google API Key:", key="api_key")
 
+# Initialize Streamlit app
+if api_key:
+    st.set_page_config(page_title="MultiLanguage Invoice Extractor")
+
 # Configure Google API key
 if api_key:
     genai.configure(api_key=api_key)
@@ -35,10 +39,6 @@ def input_image_details(uploaded_file):
         return image_parts
     else:
         raise FileNotFoundError("No file uploaded")
-
-# Initialize Streamlit app
-if api_key:
-    st.set_page_config(page_title="MultiLanguage Invoice Extractor")
 
 st.header("MultiLanguage Invoice Extractor")
 input_text = st.text_input("Input Prompt:", key="input")
