@@ -1,65 +1,54 @@
 from PIL import Image
 import streamlit as st
-import google.generativeai as genai
+import anthropic
 
 st.title("AI VISION")
 
 # Add input field for API key
-api_key = st.text_input("Enter your Google API key:", type="password")
+api_key = st.text_input("Enter your Anthropoc API key:", type="password")
 
-# Initialize Gemini Pro Vision model
-model = 'gemini-pro-vision'
+# Initialize Anthropoc client
+client = None
 
 if api_key:
-    # Configure Gemini Pro Vision API with the provided API key
-    genai.configure(api_key=api_key)
-    
-    # Load Gemini Pro Vision model
-    model = genai.GenerativeModel('gemini-pro-vision')
+    # Create an instance of the Anthropoc client
+    client = anthropic.Anthropic(api_key=api_key)
 
 # Input fields
 input_text = st.text_input("Input Prompt:")
-uploaded_files = st.file_uploader("Choose images...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 submit = st.button("GO")
 
 input_prompt = """
-You are an expert in everything. We will upload images ,
-and you will have to answer any questions based on the uploaded  images.
-Always make your responses detailed and well organized.
+You are an expert in everything. We will upload an image,
+and you will have to answer any questions based on the uploaded image.
 """
 
-# Display the uploaded images
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+# Display the uploaded image
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
 # if submit button is clicked
 if submit:
-    if api_key and model:
-        if uploaded_files:
-            for uploaded_file in uploaded_files:
-                # Process each uploaded image and input
-                if uploaded_file is not None:
-                    # Read the file into bytes
-                    bytes_data = uploaded_file.getvalue()
+    if api_key and client:
+        if uploaded_file:
+            # Process the uploaded image and input
+            bytes_data = uploaded_file.getvalue()
+            image_parts = [{"mime_type": uploaded_file.type, "data": bytes_data}]
 
-                    image_parts = [
-                        {
-                            "mime_type": uploaded_file.type,  # Get the mime type of the uploaded file
-                            "data": bytes_data
-                        }
-                    ]
-
-                    # Get response from Gemini Pro Vision API
-                    response = model.generate_content([input_text, image_parts[0], input_prompt])
-                    st.subheader("The Response for Image:")
-                    st.write(response.text)
-                else:
-                    st.error("No file uploaded")
+            # Generate content using the "claude-3-sonnet-20240229" model
+            message = client.messages.create(
+                model="claude-3-sonnet-20240229",
+                max_tokens=1000,
+                temperature=0,
+                messages=[input_text, image_parts[0], input_prompt]
+            )
+            st.subheader("The Response for Image:")
+            st.write(message.content)
         else:
-            st.error("No files uploaded. Please select one or more images.")
+            st.error("No file uploaded")
     elif not api_key:
-        st.error("Please enter your Google API key.")
-    elif not model:
-        st.error("Failed to initialize the model. Please check your API key.")
+        st.error("Please enter your Anthropoc API key.")
+    elif not client:
+        st.error("Failed to initialize the Anthropoc client. Please check your API key.")
