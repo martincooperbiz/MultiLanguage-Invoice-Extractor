@@ -1,7 +1,5 @@
 from PIL import Image
-
 import streamlit as st
-
 import google.generativeai as genai
 
 st.title("AI VISION")
@@ -21,7 +19,7 @@ if api_key:
 
 # Input fields
 input_text = st.text_input("Input Prompt:")
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_files = st.file_uploader("Choose images of the invoices...", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 submit = st.button("GO")
 
 input_prompt = """
@@ -30,7 +28,7 @@ and you will have to answer any questions based on the uploaded  image.
 """
 
 # Display the uploaded images
-if uploaded_files is not None:
+if uploaded_files:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image", use_column_width=True)
