@@ -36,19 +36,13 @@ if submit:
             for uploaded_file in uploaded_files:
                 # Process each uploaded image and input
                 if uploaded_file is not None:
-                    # Read the file into bytes
-                    bytes_data = uploaded_file.getvalue()
-
-                    # Base64 encode the image data
-                    base64_data = base64.b64encode(bytes_data).decode('utf-8')
-
                     # Create message with Anthropic API
                     message = client.messages.create(
                         model="claude-3-sonnet-20240229",
                         max_tokens=1000,
                         temperature=0,
                         messages=[{
-                            "data": base64_data,
+                            "data": uploaded_file,
                             "content_type": uploaded_file.type
                         }]
                     )
