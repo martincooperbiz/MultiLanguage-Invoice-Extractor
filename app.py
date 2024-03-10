@@ -1,62 +1,57 @@
-from dotenv import load_dotenv
 from PIL import Image
 
 import streamlit as st
-import os
 
 import google.generativeai as genai
 
-## load all the environment variables from .env
-load_dotenv()
+st.title("MultiLanguage Invoice Extractor")
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# Add input field for API key
+api_key = st.text_input("Enter your Google API key:", type="password")
 
-## Load Gemini pro vision model
-model=genai.GenerativeModel('gemini-pro-vision')
+# Initialize Gemini Pro Vision model
+model = None
 
-def get_gemini_response(input,image,user_prompt):
-    response=model.generate_content([input,image[0],user_prompt])
-    return response.text
+if api_key:
+    # Configure Gemini Pro Vision API with the provided API key
+    genai.configure(api_key=api_key)
+    
+    # Load Gemini Pro Vision model
+    model = genai.GenerativeModel('gemini-pro-vision')
 
-def input_image_details(uploaded_file):
-    if uploaded_file is not None:
-        # Read the file into bytes
-        bytes_data = uploaded_file.getvalue()
-
-        image_parts = [
-            {
-                "mime_type": uploaded_file.type,  # Get the mime type of the uploaded file
-                "data": bytes_data
-            }
-        ]
-        return image_parts
-    else:
-        raise FileNotFoundError("No file uploaded")
-
-
-##initialize our streamlit app
-
-st.set_page_config(page_title="MultiLanguage Invoice Extractor")
-
-st.header("MultiLanguage Invoice Extractor")
-input=st.text_input("Input Prompt: ",key="input")
+# Input fields
+input_text = st.text_input("Input Prompt:")
 uploaded_file = st.file_uploader("Choose an image of the invoice...", type=["jpg", "jpeg", "png"])
+submit = st.button("Tell me about the invoice")
 
-if uploaded_file is not None:
-    image=Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image.", use_column_width=True)
-
-submit=st.button("Tell me about the invoice")
-
-input_prompt="""
-You are an expert in understanding invoices. We will upload a a image as invoice
-and you will have to answer any questions based on the uploaded invoice image
+input_prompt = """
+You are an expert in understanding invoices. We will upload an image as an invoice,
+and you will have to answer any questions based on the uploaded invoice image.
 """
 
-## if submit button is clicked
-
+# if submit button is clicked
 if submit:
-    image_data=input_image_details(uploaded_file)
-    response=get_gemini_response(input_prompt,image_data,input)
-    st.subheader("The Rresponse is")
-    st.write(response)
+    if api_key and model:
+        # Process image and input
+        if uploaded_file is not None:
+            # Read the file into bytes
+            bytes_data = uploaded_file.getvalue()
+
+            image_parts = [
+                {
+                    "mime_type": uploaded_file.type,  # Get the mime type of the uploaded file
+                    "data": bytes_data
+                }
+            ]
+        else:
+            st.error("No file uploaded")
+            st.stop()
+
+        # Get response from Gemini Pro Vision API
+        response = model.generate_content([input_text, image_parts[0], input_prompt])
+        st.subheader("The Response is")
+        st.write(response.text)
+    elif not api_key:
+        st.error("Please enter your Google API key.")
+    elif not model:
+        st.error("Failed to initialize the model. Please check your API key.")
