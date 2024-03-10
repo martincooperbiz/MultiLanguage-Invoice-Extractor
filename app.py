@@ -16,7 +16,7 @@ client = None
 model = None
 
 if api_key:
-    # Create an instance of the Anthropoc client
+    # Initialize Anthropic client with the provided API key
     client = anthropic.Anthropic(api_key=api_key)
 
 # Input fields
@@ -31,7 +31,7 @@ and you will have to answer any questions based on the uploaded  image.
 
 # if submit button is clicked
 if submit:
-    if api_key and model:
+    if api_key and client:
         if uploaded_files:
             for uploaded_file in uploaded_files:
                 # Process each uploaded image and input
@@ -42,22 +42,23 @@ if submit:
                     # Base64 encode the image data
                     base64_data = base64.b64encode(bytes_data).decode('utf-8')
 
-                    image_parts = [
-                        {
-                            "mime_type": uploaded_file.type,  # Get the mime type of the uploaded file
-                            "data": base64_data
-                        }
-                    ]
-
-                    # Get response from Gemini Pro Vision API
-                    response = model.generate_content([input_text, image_parts[0], input_prompt])
+                    # Create message with Anthropic API
+                    message = client.messages.create(
+                        model="claude-3-sonnet-20240229",
+                        max_tokens=1000,
+                        temperature=0,
+                        messages=[{
+                            "data": base64_data,
+                            "content_type": uploaded_file.type
+                        }]
+                    )
                     st.subheader("The Response for Image:")
-                    st.write(response.text)
+                    st.write(message.content)
                 else:
                     st.error("No file uploaded")
         else:
             st.error("No files uploaded. Please select one or more images.")
     elif not api_key:
-        st.error("Please enter your Google API key.")
-    elif not model:
-        st.error("Failed to initialize the model. Please check your API key.")
+        st.error("Please enter your Anthropics API key.")
+    elif not client:
+        st.error("Failed to initialize the Anthropic client. Please check your API key.")
